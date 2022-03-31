@@ -681,11 +681,11 @@ For the system~(\ref{eq:dyna}) controlled by DC-TMPC, $x=x^r$ is an asymptotical
 \begin{proof}
 Let $({\bf x}^\circ,{\bf u}^\circ)$ be the trajectory computed in line 9  of Algorithm~\ref{algo} at $n+1$, for any initial state such that line 7 is feasible. Then, setting $(\bc,\bS) = (0,\{\{0\},\ldots,\{0\}\})$, and using $\S_0=\{0\}$ and the property (\ref{eq:Q_N}) of $\hat{Q}$, we obtain 
 \[
-J(\bc,\bS,{\bf x}^\circ,{\bf u}^\circ) \leq J^{j_{n},n} - \|x[n] - x^r\|_Q^2 + \|u[n] - u^r\|_R^2
+J(\bc,\bS,{\bf x}^\circ,{\bf u}^\circ) \leq J^{j_{n},n} - \|x[n] - x^r\|_Q^2 + \|u[n] - u^r\|_R^2,
 \]
 where $j_{n}$ is the final iteration count of Algorithm~\ref{algo} at time $n$. The optimal solutions of~(\ref{eq:cvx}) at time $n+1$ therefore give
 \[
-J^{j_{n+1},n+1}\leq J^{0,n+1}\leq J^{j_n,n} - \|x[n] - x^r\|_Q^2 - \|u[n] - u^r\|_R^2 ,
+J^{j_{n+1},n+1}\leq J^{0,n+1}\leq J^{j_n,n} - \|x[n] - x^r\|_Q^2 - \|u[n] - u^r\|_R^2.
 \]
 % and hence Lemma~\ref{lem:convergence} implies
 % \[
