@@ -350,7 +350,7 @@ These definitions ensure recursive feasibility of the scheme. In addition, the o
 % of the system lie within tubes arising from the successive predicted trajectories ${\bf x}^\circ$ and whose cross sections form robustly invariant sets whose size is adjusted by the feedback term $K_k s_k$. 
 
 Despite its attractive theoretical properties, the successive linearisation approach relies on bounds on the linearisation error $\G_k$, which are difficult to compute in general and might result in overly conservative bounds if no further assumptions are made on $f$. Moreover, the algorithm outlined in this section does not ensure convergence to a solution that satisfies the first order optimality conditions for the problem of minimizing $\sum_{k=0}^{N-1} [\|x_k-x^r\|_Q^2 + \|u_k-u^r\|_R^2] + \|x_N-x^r\|_{\hat{Q}}^2$ subject to $x_{k+1}=f(x_k,u_k)$, $x_k\in\X$ and $u_k\in\U$ since $\G_k$ may not be tight.
-To overcome these problems, we propose a method for systems~(\ref{eq:dyna}) in which $f$ is DC function to obtain tight bounds on linearisation errors.
+To overcome these problems, we propose a method for systems~(\ref{eq:dyna}) in which $f$ is a DC function to obtain tight bounds on linearisation errors.
 
 
 \section{Successive convex programming tube MPC for DC systems}
@@ -360,7 +360,7 @@ To overcome these problems, we propose a method for systems~(\ref{eq:dyna}) in w
 %Returning to the model~(\ref{eq:dyna}), 
 To derive a control algorithm with reduced computation and improved performance, we strengthen our assumptions
 %Assumption~\ref{assump:lin} 
-on the model~(\ref{eq:dyna}) with the following additional assumption.
+on model~(\ref{eq:dyna}) as follows.
 
 \begin{assumption}\label{assump:dc}
 $f$ is DC on $\X\times\U$ and $\X,\U$ are convex sets.
@@ -370,15 +370,13 @@ Under Assumption~\ref{assump:dc} the model~(\ref{eq:dyna}) can be expressed
 %
 \begin{align}
 \label{eq:DC}
-x[n+1] 
-%= f(x[n], u[n])
-=  f_1(x[n], u[n]) -  f_2(x[n], u[n]) 
+x[n+1] =  f_1(x[n], u[n]) -  f_2(x[n], u[n]),  
 \end{align}
 where each component of the vector-valued functions $f_1, f_2$ is a convex function. 
 %
 Note that~(\ref{eq:DC}) includes systems in which $f$ in (\ref{eq:dyna}) is either convex or concave. 
 %
-More generally, any twice continuously differentiable function is DC and any continuous function can be approximated arbitrarily closely by a DC function on a compact convex set~\cite{horst99:dcprog,hartman59:dcfun}.
+More generally, any twice continuously differentiable function is DC and any continuous function can be approximated arbitrarily closely by a DC function on a compact convex set~\cite{horst99:dcprog,hartman59:dcfun}, which extends considerably the scope of the present method.
 
 Given a predicted trajectory $({\bf x}^\circ, {\bf u}^\circ)$ of (\ref{eq:dyna}), the perturbed variables $s_k = x_k - x_k^\circ$, $v_k = u_k - u_k^\circ$ are governed by $s_0=0$ and, for $k=0,\ldots,N-1$,
 %
@@ -417,10 +415,10 @@ Various parameterisations of the sets $\S_k$ are possible: polytopic,  ellipsoid
 \[
 \S_k = \{ (s_{1}, \ldots, s_{n_x})\!\in\!\RR^{n_x} : \underline{s}_{k, j} \!\leq\! s_{j} \!\leq\! \bar{s}_{k, j},  \, j = 1, \ldots, n_x \} .
 \]
-Considering $g_{1,k}$, $g_{2,k}$ as functions of $s_k$ and $c_k$,
+Considering $g_{1,k}$, $g_{2,k}$ as functions of $s_k$ and $c_k$:
 \[%\begin{multline}
-g_{i,k}(s_k,c_k) \!=\! 
-f_i(x^\circ_k + s_{k}, \! u^\circ_k + v_k) - f_i(x^\circ_k, \! u^\circ_k) - \Phi_{i, k} s_k - B_{i, k} c_k  
+g_{i,k} \!=\! 
+f_i(x^\circ_k + s_{k}, \! u^\circ_k + v_k) - f_i(x^\circ_k, \! u^\circ_k) - \Phi_{i, k} s_k - B_{i, k} c_k,  
 %\label{eq:error1}
 \]%\end{multline}
 the convexity of $f_i(x,u)$ for $(x,u)\in\X\times\U$ implies that $g_{i,k}(s,c)$ 
@@ -428,15 +426,15 @@ is convex for all $(s,c)$ such that $(x^\circ+s,u^\circ+Ks+c)$ lies in $\X\times
 %is a Jacobian linearisation error and $g_{i}(x^\circ,u^\circ,s,v)$ 
 %
 \begin{align*}
-& \min_{\substack{s_k \in \S_k}} g_{i,k}(s_k,c_k) = 0
+& \min_{\substack{s_k \in \S_k}} g_{i,k}(s_k,c_k) = 0,
 \\
-& \max_{\substack{s_k \in \S_k}} g_{i,k}(s_k,c_k) = \max_{\substack{s \in \V(\S_k)}} g_{i,k}(s,c_k) 
+& \max_{\substack{s_k \in \S_k}} g_{i,k}(s_k,c_k) = \max_{\substack{s \in \V(\S_k)}} g_{i,k}(s,c_k), 
 \end{align*}
 %
-where $\V(\S_k)$ denotes the set of vertices of $\S_k$. The constraint on $\S_{k+1}$ in \eqref{eq:tube} is therefore ensured if
+where $\V(\S_k)$ denotes the set of vertices of $\S_k$. The tube constraint \eqref{eq:tube} is therefore ensured by the convex inequalities
 %
 \begin{align*}
-\underline{s}_{k+1} &\leq \! \min_{\substack{s \in \V(\S_k})} \! \{(\Phi_{1, k}\!-\!\Phi_{2, k}) s + (B_{1, k}\!-\!B_{2, k}) c_k - g_{2,k}(s)\}
+\underline{s}_{k+1} &\leq \! \min_{\substack{s \in \V(\S_k})} \! \{(\Phi_{1, k}\!-\!\Phi_{2, k}) s + (B_{1, k}\!-\!B_{2, k}) c_k - g_{2,k}(s)\},
 \\
 %
 \overline{s}_{k+1} &\geq \! \max_{\substack{s \in \V(\S_k)}} \! \{(\Phi_{1, k}\!-\!\Phi_{2, k}) s + (B_{1, k}\!-\!B_{2, k}) c_k + g_{1, k}(s) \}. 
@@ -565,7 +563,7 @@ For example, given a trajectory $({\bf x}^\circ, {\bf u}^\circ)$ of (\ref{eq:dyn
       %   &\text{and } \| x_N^\circ - x^r \|_{\hat{Q}}^2\leq\hat{\gamma}
       % \end{aligned}$
     }{
-    Find $({\bf x}^\circ, {\bf u}^\circ)$ using (\ref{eq:step_update3}a-d)
+    Compute $({\bf x}^\circ, {\bf u}^\circ)$ using (\ref{eq:step_update3}a-d)
     }
     %Update reference trajectory: $x^r_{k} \gets  \{x^r[n], x^r[n+1], \ldots, x^r[n + N]\} $\\
     Set $\|\bc\| \gets \infty$, $j \gets 0$
