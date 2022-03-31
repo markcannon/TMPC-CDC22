@@ -63,7 +63,7 @@
 
 
 \title{\LARGE \bf
-Difference of convex functions in tube MPC}
+Difference of convex functions in robust tube MPC}
 
 
 \author{Martin Doff-Sotta$^\star$
@@ -80,9 +80,9 @@ Mark Cannon$^\star$
 \pagestyle{plain}
 
 \begin{abstract}
-We propose a  tube-based Model Predictive Control (MPC) paradigm for nonlinear systems whose dynamics can be expressed as a difference of convex functions. 
+We propose a  robust tube-based Model Predictive Control (MPC) paradigm for nonlinear systems whose dynamics can be expressed as a difference of convex functions. 
 %
-The approach exploits the convexity properties of the system model to derive convex conditions that govern the evolution of tubes bounding predicted trajectories. 
+The approach exploits the convexity properties of the system model to derive convex conditions that govern the evolution of robust tubes bounding predicted trajectories. 
 %
 These tubes allow an upper bound on a performance cost to be minimised subject to state and control constraints as a convex program, the solution of which can be used to update an estimate of the optimal state and control trajectories. 
 %
@@ -123,7 +123,7 @@ A common strategy in nonlinear tube-based MPC is to treat the nonlinearity in th
 and approach has guarantees of recursive feasibility and asymptotic stability.
 
 %Although in principle computationally tractable, 
-These approaches rely for robustness on bounds on linearisation errors, which are either computed using fixed prior bounds on predicted future states, and are therefore conservative, or otherwise may present computational difficulties. In this work we show that tighter bounds can be obtained under certain convexity assumptions. We consider systems that can be expressed as a difference of convex functions~\cite{horst99:dcprog,hartman59:dcfun}. 
+These strategies rely for robustness on bounds on linearisation errors, which are either computed using fixed prior bounds on predicted future states, and are therefore conservative, or otherwise may present computational difficulties. In this work we show that tighter bounds can be obtained under certain convexity assumptions. We consider systems that can be expressed as a difference of convex functions~\cite{horst99:dcprog,hartman59:dcfun}. 
 The convexity properties of these systems considerably simplify the problem of determining bounds on model states that are suitable for defining predicted state tubes. We derive convex conditions for the evolution of tubes bounding perturbations on future predicted trajectories. Analogously to successive linearisation approaches, these conditions form the basis of an iteration that solves a sequence of convex programs to minimise a bound on predicted cost subject to robust constraint satisfaction. The iteration is recursively feasible and convergent, and the resulting MPC algorithm is asymptotically stabilising. 
 %A convex nonlinear function developed as a Taylor series truncated to the first order term has a convex  linearisation error.  For convex  linearisation errors defined on compact sets, the maximum occurs at the boundary of the domain, and the minimum is zero, which allows to construct non-conservative bounds for the error. If the error is treated as a disturbance of the perturbed dynamics, the tube-based MPC formalism can be applied efficiently to robustly stabilise the nonlinear system in real time. 
 
@@ -167,10 +167,6 @@ Here $x \in \X$, $u \in \U$ are state and control variables and $\X\subset\RR^{n
 %
 To simplify presentation we discuss here the case of a constant reference $(x^r,u^r)$.
 
-\begin{assumption}\label{assump:lin}
-$f$ is differentiable on $\X\times\U$.
-\end{assumption}
-
 %Finding a nonlinear MPC controller for system \eqref{eq:dyna} in general is hard and can be intractable for large online problems. 
 %
 %One popular approach is, at each time step $n$, to successively 
@@ -198,9 +194,14 @@ s_{k+1} = A_k s_k + B_k v_k  + g_k,
 % \\
 % &= f(x_k^\circ, u_k^\circ) + A_k s_k + B_k v_k  + g_k, 
 % \end{align*}
-for $k= 0, \ldots, N-1$, where $A_k = \frac{\partial f}{\partial x}(x_k^\circ, u_k^\circ)$, $B_k = \frac{\partial f}{\partial u}(x_k^\circ, u_k^\circ)$, and $g_k$ is the remainder term in the first-order Taylor expansion of $f$ about $(x_k^\circ,u_k^\circ)$. 
+for $k= 0, \ldots, N-1$, where $A_k = \frac{\partial f}{\partial x}(x_k^\circ, u_k^\circ)$, $B_k = \frac{\partial f}{\partial u}(x_k^\circ, u_k^\circ)$, and $g_k$ is the remainder term in the first-order Taylor expansion of $f$ about $(x_k^\circ,u_k^\circ)$. For  the Jacobian linearisation to exist, the following assumption was implied
+
+\begin{assumption}\label{assump:lin}
+$f$ is differentiable on $\X\times\U$.
+\end{assumption}
+
 %
-The predicted control sequence is parameterised with a feedforward term $c_k$ and a linear feedback term $K_k s_k$, for $ k = 0,\ldots, N-1$,
+The predicted control perturbation sequence is parameterised with a feedforward term $c_k$ and a linear feedback term $K_k s_k$, for $ k = 0,\ldots, N-1$,
 \begin{equation}
 \label{eq:input}
 v_k = c_k + K_k s_k.
@@ -259,14 +260,14 @@ K_k &= -\Delta_k^{-1} B_k^\top P_{k+1} A_k
 P_k &= Q + A_k^\top P_{k+1} A_k - A_k^\top P_{k+1}B_k \Delta_k^{-1} B_k^\top P_{k+1} A_k
 \end{aligned}
 \end{equation}
-Alternatively $K_k=\hat{K}$ may be used for all $k$.
+%Alternatively $K_k=\hat{K}$ may be used for all $k$.
 %. Note that the feedback term mitigates the effects of uncertainty in the model, namely the linearisation error $g_k$. 
 
 The MPC optimisation at time $n$ is initialised with a feasible predicted trajectory $({\bf x}^\circ, {\bf u}^\circ)$ of (\ref{eq:dyna})
 %such that $(x_k^\circ,u_k^\circ)\in\X\times\U$ for all $k$
 %At each time step $n$, we obtain successive approximations of the trajectory 
 and the following optimisation problem in variables $\bc$, $\bS$ %$\bgamma=\{\gamma_k\}_{k=0}^N$ 
-is solved:
+is solved sequentially
 \begin{equation}\label{eq:iteropt0}
 \begin{alignedat}{2}
 &  \min_{\bc,\bS} &  \ &   J(\bc,\bS,{\bf x}^\circ,{\bf u}^\circ) 
@@ -299,18 +300,18 @@ The solution of (\ref{eq:iteropt0}) for $\bc$ is used to update $({\bf x}^\circ,
 %
 \begin{subequations}\label{eq:iter1}%
 \begin{alignat}{2}
-s_0 &\gets 0
+s_0 &\gets 0, 
 \\
 \label{eq:iter2}
-u^\circ_k &\gets u^\circ_k + c_k + K_k s_k
+u^\circ_k &\gets u^\circ_k + c_k + K_k s_k, 
 %\quad & \forall k &\in \{0, \ldots , N-1\}, 
 \\
 \label{eq:iter3}
-s_{k+1} &\gets f(x^\circ_k, u^\circ_k) - x^\circ_{k+1}
+s_{k+1} &\gets f(x^\circ_k, u^\circ_k) - x^\circ_{k+1}, 
 %\quad & \forall k &\in \{0, \ldots , N-1\},
 \\
 \label{eq:iter4}
-x^\circ_{k+1} &\gets f(x^\circ_k, u^\circ_k) 
+x^\circ_{k+1} &\gets f(x^\circ_k, u^\circ_k),  
 % \quad & \forall k & \in \{0, \ldots , N-1\},
 \end{alignat}
 \end{subequations}
@@ -330,11 +331,11 @@ u[n] = u^\circ_{0}.
 At time $n+1$ we set $x^\circ_0 \gets  x[n+1]$ and initialise a new iteration with $({\bf x}^\circ,{\bf u}^\circ)$ defined, for $k=0,\ldots,N-1$, by
 \begin{subequations}\label{eq:step_update3}
 \begin{align}
-u^\circ_{k} &\gets u^\circ_{k+1}
+u^\circ_{k} &\gets u^\circ_{k+1}, 
 %, \, \forall k \in \{0, \ldots , N-2\}, 
 \\
 \label{eq:step_update4}
-x^\circ_{k+1} &\gets  f(x^\circ_{k}, u^\circ_{k})
+x^\circ_{k+1} &\gets  f(x^\circ_{k}, u^\circ_{k}), 
 %, \, \forall k \in \{0, \ldots, N-2\},
 \\
 \label{eq:step_update5_}
