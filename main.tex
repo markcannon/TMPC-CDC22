@@ -754,7 +754,7 @@ x_1[n+1] &= x_1[n] - \delta\frac{A_1}{A} \sqrt{2 g x_1[n]} + \delta\frac{k_p}{A}
 x_2[n+1] &= x_2[n] - \delta\frac{A_2}{A} \sqrt{2 g x_2[n]} + \delta\frac{A_1}{A} \sqrt{2 g x_1[n]}, 
 \end{align*}
 %\end{subequations}
-where $x_1$, $x_2$, are the depths of liquid in a pair of connected tanks, $A$ is the tank cross-section area, $A_1$, $A_2$ are the outflow orifices areas, $g$ is acceleration due to gravity, and $k_p$ is the pump gain. The problem at hand is to stabilise the system around a reference state $x^r_k = [(A_2/A_1)^2h_r \  h_r]^\top$.
+where $x_1$, $x_2$, are the depths of liquid in a pair of connected tanks, $A$ is the tank cross-section area, $A_1$, $A_2$ are the outflow orifices areas, $g$ is acceleration due to gravity, and $k_p$ is the pump gain. The problem at hand is to stabilise the system around a reference state $x^r_k = [(A_2/A_1)^2h_r \quad  h_r]^\top$.
 %
 The model can be written as a difference of convex functions
 \begin{align*}
@@ -771,7 +771,7 @@ f &= \begin{bmatrix}
 \end{bmatrix}}_{f_2}
 \end{align*}
 
-Let $({\bf x}_k^\circ, {\bf u}_k^\circ)$ be an $N$-step predicted trajectory evaluated at time $n$. Since the model depends linearly on the control input, the perturbations $s_k = x_k - x_k^\circ$ and $v_k = u_k - u_k^\circ$ under the predicted control law (\ref{eq:input}) are governed by the dynamics
+Let $({\bf x}_k^\circ, {\bf u}_k^\circ)$ be an $N$-step-ahead predicted trajectory evaluated at time $n$. Since the model depends linearly on the control input, the perturbations $s_k = x_k - x_k^\circ$ and $v_k = u_k - u_k^\circ$ under the predicted control law (\ref{eq:input}) are governed by the dynamics
  \[
  s_{k+1} = (\Phi_{1, k}- \Phi_{2, k}) s_k + (B_{1,k} - B_{2,k}) c_k + g_{1, k}(s_k) -  g_{2, k}(s_k)
  \]
@@ -963,7 +963,7 @@ Max \# of iterations &   $\text{maxIters}$   &   $5$   &    \si{-}  \\ \hline
 
 
 We now compare the convergence properties of DC-TMPC with the successive linearisation tube-based MPC algorithm in \cite{mark} (MPC-2011). As described in Section~\ref{sec:TMPC}, linearisation errors around predicted trajectories are treated as disturbances in MPC-2011. The approach uses state- and control-dependent bounds on these errors, but these are determined assuming a fixed operating region. Hence the approach is more conservative than DC-TMPC, which exploits the convex nature of the linearisation errors to find tighter bounds on the state perturbations. As a result, it is expected that DC-TMPC demonstrates faster convergence and a larger set of feasible initial conditions than MPC-2011. To demonstrate this, we apply the MPC-2011 algorithm to the coupled tanks model with the same parameters. 
-For a given terminal set, the range of open loop input voltage allowable for initialising the algorithm with a feasible problem was found to be $[6.1, 9.3]$ V for DC-TMPC, while it was limited between $[7.2, 7.8]$ V for MPC-2011, showing a smaller feasible initial conditions set. This demonstrates the relative conservativeness of the state perturbation bounds in MPC-2011 over DC-TMPC, as expected. Finally, the faster convergence of DC-TMPC is shown in Figure \ref{fig:tmpc5}, which compares the evolution of the objective value for both algorithms at the first time step, $J^{j,0}$, $j=1,\ldots,5$. This achieves to demonstrate the superiority of DC-TMPC over the tube-based MPC-2011 algorithm with successive linearisations.  
+For a given terminal set, the range of open loop input voltage allowable for initialising the algorithm with a feasible problem was found to be $[6.1, 9.3]$~V for DC-TMPC, while it was limited between $[7.2, 7.8]$ V for MPC-2011, showing a smaller feasible initial conditions set. This demonstrates the relative conservativeness of the state perturbation bounds in MPC-2011 over DC-TMPC, as expected. Finally, the faster convergence of DC-TMPC is shown in Figure \ref{fig:tmpc5}, which compares the evolution of the objective value for both algorithms at the first time step, $J^{j,0}$, $j=1,\ldots,5$. This achieves to demonstrate the superiority of DC-TMPC over the tube-based MPC-2011 algorithm with successive linearisations.  
 
 \begin{figure}[h]
     \centering
